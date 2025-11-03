@@ -5,62 +5,62 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
-
   <body>
     <a-scene
       mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/targets.mind;
-                    filterMinCF:0.001;
-                    filterBeta:0.005;"
+                    showStats: false;"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <!-- Replace with your real GLB URL -->
+        <!-- Your GLTF model -->
         <a-asset-item
-          id="model1"
+          id="modelAsset"
+          src="https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/scene.gltf"
           crossorigin="anonymous"
-          src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/softmind/scene.gltf"
         ></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+      <!-- Target 0 corresponds to the first image in your .mind file -->
       <a-entity mindar-image-target="targetIndex: 0" id="targetEntity">
+        <!-- Optional plane to visualize the tracking surface -->
+        <!-- <a-plane color="#FFFFFF" opacity="0.2" height="0.6" width="1"></a-plane> -->
+
         <a-gltf-model
           id="gltfModel"
-          src="#model1"
-          position="0 0 0"
-          scale="0.5 0.5 0.5"
+          src="#modelAsset"
+          position="0 0 0.1"
           rotation="0 0 0"
+          scale="0.5 0.5 0.5"
           visible="false"
         ></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const model = document.querySelector("#gltfModel");
-        const target = document.querySelector("#targetEntity");
+      const model = document.querySelector("#gltfModel");
+      const target = document.querySelector("#targetEntity");
 
-        model.addEventListener("model-loaded", () => {
-          console.log("✅ GLTF model loaded successfully!");
-        });
+      // Log model loading state
+      model.addEventListener("model-loaded", () => {
+        console.log("✅ 3D model loaded successfully!");
+      });
+      model.addEventListener("error", (e) => {
+        console.error("❌ Model failed to load:", e);
+      });
 
-        model.addEventListener("error", (e) => {
-          console.error("❌ GLTF model error:", e);
-        });
+      target.addEventListener("targetFound", () => {
+        console.log("📸 Target found — showing model");
+        model.setAttribute("visible", "true");
+      });
 
-        target.addEventListener("targetFound", () => {
-          console.log("📸 Target Found — showing model");
-          model.setAttribute("visible", "true");
-        });
-
-        target.addEventListener("targetLost", () => {
-          console.log("📴 Target Lost — hiding model");
-          model.setAttribute("visible", "false");
-        });
+      target.addEventListener("targetLost", () => {
+        console.log("📴 Target lost — hiding model");
+        model.setAttribute("visible", "false");
       });
     </script>
   </body>
