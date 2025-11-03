@@ -6,9 +6,7 @@
   </head>
   <body>
     <script>
-      // NOTE: This is a direct implementation of the OneEuroFilter class in JavaScript
-      // We need it to filter the raw X, Y, Z position and rotation values.
-
+      // --- 1. OneEuroFilter Class Implementation (Do not change this) ---
       class LowPassFilter {
         constructor(alpha) {
           this.setAlpha(alpha);
@@ -69,82 +67,92 @@
         }
       }
 
-      // --- CUSTOM A-FRAME COMPONENT ---
+      // --- 2. Custom A-Frame Component (Uses the Filter) ---
       AFRAME.registerComponent('smooth-tracking', {
-        schema: {
-          // Tunable parameters for the OneEuroFilter
-          minCutoff: { type: 'number', default: 0.5 }, // Controls jitter at low speed
-          beta: { type: 'number', default: 0.005 },   // Controls lag at high speed
-        },
+          schema: {
+              // STARTING WITH AGGRESSIVE SMOOTHING. Tune these!
+              minCutoff: { type: 'number', default: 0.1 }, 
+              beta: { type: 'number', default: 0.005 },   
+          },
 
-        init: function() {
-          const { minCutoff, beta } = this.data;
-          const freq = 60; // Assuming 60 FPS, adjust if needed
+          init: function() {
+              const { minCutoff, beta } = this.data;
+              const freq = 60; // Assumed FPS
 
-          // 1. Initialize filters for Position (X, Y, Z)
-          this.filterP_X = new OneEuroFilter(freq, minCutoff, beta);
-          this.filterP_Y = new OneEuroFilter(freq, minCutoff, beta);
-          this.filterP_Z = new OneEuroFilter(freq, minCutoff, beta);
+              // Initialize filters for Position (X, Y, Z)
+              this.filterP_X = new OneEuroFilter(freq, minCutoff, beta);
+              this.filterP_Y = new OneEuroFilter(freq, minCutoff, beta);
+              this.filterP_Z = new OneEuroFilter(freq, minCutoff, beta);
 
-          // 2. Initialize filters for Rotation (Euler X, Y, Z)
-          this.filterR_X = new OneEuroFilter(freq, minCutoff, beta);
-          this.filterR_Y = new OneEuroFilter(freq, minCutoff, beta);
-          this.filterR_Z = new OneEuroFilter(freq, minCutoff, beta);
-          
-          // Store the raw pose component (from MindAR)
-          this.rawPoseComponent = this.el.components['mindar-image-target'];
+              // Initialize filters for Rotation (Euler X, Y, Z)
+              this.filterR_X = new OneEuroFilter(freq, minCutoff, beta);
+              this.filterR_Y = new OneEuroFilter(freq, minCutoff, beta);
+              this.filterR_Z = new OneEuroFilter(freq, minCutoff, beta);
+              
+              // Reference to the entity's low-level transformation
+              this.rawObject3D = this.el.object3D; 
+              this.isTracking = false;
 
-          // Flag to check if tracking is active
-          this.isTracking = false;
+              // Event listeners
+              this.el.addEventListener('targetFound', () => {
+                  this.isTracking = true;
+              });
+              this.el.addEventListener('targetLost', () => {
+                  this.isTracking = false;
+              });
+          },
 
-          // Event listeners for MindAR
-          this.el.addEventListener('targetFound', () => {
-            this.isTracking = true;
-          });
-          this.el.addEventListener('targetLost', () => {
-            this.isTracking = false;
-          });
-        },
+          tick: function(time, deltaTime) {
+              if (!this.isTracking) return;
 
-        tick: function(time, deltaTime) {
-          if (!this.isTracking) return;
+              const timestamp = time / 1000.0; // Time in seconds
+              
+              // --- 1. Read RAW values from the object3D (set by MindAR) ---
+              const rawP = this.rawObject3D.position;
+              // Convert Quaternion to Euler angles for filtering individual axes
+              const rawR = new THREE.Euler().setFromQuaternion(this.rawObject3D.quaternion, 'YXZ'); 
 
-          // Time in seconds for the filter
-          const timestamp = time / 1000.0; 
+              // --- 2. Filter Position ---
+              const fX = this.filterP_X.filter(rawP.x, timestamp);
+              const fY = this.filterP_Y.filter(rawP.y, timestamp);
+              const fZ = this.filterP_Z.filter(rawP.z, timestamp);
+              
+              // --- 3. Filter Rotation (convert to Degrees, filter, then convert back) ---
+              // Filter the rotation in degrees (easier to tune)
+              const rX = this.filterR_X.filter(THREE.MathUtils.radToDeg(rawR.x), timestamp);
+              const rY = this.filterR_Y.filter(THREE.MathUtils.radToDeg(rawR.y), timestamp);
+              const rZ = this.filterR_Z.filter(THREE.MathUtils.radToDeg(rawR.z), timestamp);
 
-          // --- 1. Get RAW Position and Rotation ---
-          const rawPosition = this.el.getAttribute('position');
-          const rawRotation = this.el.getAttribute('rotation');
-
-          // --- 2. Filter Position ---
-          const fX = this.filterP_X.filter(rawPosition.x, timestamp);
-          const fY = this.filterP_Y.filter(rawPosition.y, timestamp);
-          const fZ = this.filterP_Z.filter(rawPosition.z, timestamp);
-          
-          // --- 3. Filter Rotation (Euler Angles) ---
-          const rX = this.filterR_X.filter(rawRotation.x, timestamp);
-          const rY = this.filterR_Y.filter(rawRotation.y, timestamp);
-          const rZ = this.filterR_Z.filter(rawRotation.z, timestamp);
-
-          // --- 4. Apply SMOOTHED Pose to the Entity ---
-          // This is the crucial step: we override the raw pose applied by MindAR.
-          this.el.setAttribute('position', { x: fX, y: fY, z: fZ });
-          this.el.setAttribute('rotation', { x: rX, y: rY, z: rZ });
-        }
+              // --- 4. Apply SMOOTHED Pose directly to the object3D ---
+              this.rawObject3D.position.set(fX, fY, fZ);
+              
+              // Convert filtered degrees back to radians and set the rotation
+              this.rawObject3D.rotation.set(
+                  THREE.MathUtils.degToRad(rX),
+                  THREE.MathUtils.degToRad(rY),
+                  THREE.MathUtils.degToRad(rZ),
+                  'YXZ'
+              );
+          }
       });
-      // ------------------------------------------------------------------
-      // ONEEUROFILTER IMPLEMENTATION & CUSTOM A-FRAME COMPONENT (END)
-      // ------------------------------------------------------------------
     </script>
-
-    <a-scene mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene 
+      mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/targets.mind;" 
+      color-space="sRGB" 
+      renderer="colorManagement: true, physicallyCorrectLights" 
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: false">
+      
       <a-assets>
         <a-asset-item id="avatarModel" src="simple_pizza.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity mindar-image-target="targetIndex: 0" **smooth-tracking**>
+      <a-entity 
+        mindar-image-target="targetIndex: 0" 
+        smooth-tracking="minCutoff: 0.1; beta: 0.005">
+        
         <a-gltf-model rotation="90 0 0" position="0 0 0.1" scale="0.4 0.4 0.4" src="#avatarModel"></a-gltf-model>
       </a-entity>
     </a-scene>
