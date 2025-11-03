@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+
+  <body>
+    <a-scene
+      mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/ar-content/all.mind; 
+                    filterMinCF:0.001; 
+                    filterBeta:0.005;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-assets>
+        <!-- Replace with your Supabase GLTF URL when uploaded -->
+        <a-asset-item id="model1" src="https://YOUR_SUPABASE_URL/path/to/model.glb"></a-asset-item>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Model appears when the first image in the .mind file is detected -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-gltf-model
+          src="#model1"
+          position="0 0 0"
+          scale="0.5 0.5 0.5"
+          rotation="0 0 0"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
+        ></a-gltf-model>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
