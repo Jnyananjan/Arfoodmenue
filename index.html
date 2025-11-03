@@ -17,51 +17,48 @@
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <!-- Replace this URL with your actual Supabase GLB model -->
+        <!-- Replace with your real GLB URL -->
         <a-asset-item
           id="model1"
+          crossorigin="anonymous"
           src="https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/scene.gltf"
         ></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity mindar-image-target="targetIndex: 0">
+      <a-entity mindar-image-target="targetIndex: 0" id="targetEntity">
         <a-gltf-model
           id="gltfModel"
           src="#model1"
-          position="0 0.3 0"
-          scale="1 1 1"
+          position="0 0 0"
+          scale="0.5 0.5 0.5"
           rotation="0 0 0"
           visible="false"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear"
         ></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      // Register service worker for caching
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("sw.js")
-          .then(() => console.log("✅ Service Worker Registered (Model Cached)"))
-          .catch((error) =>
-            console.error("❌ Service Worker Registration Failed:", error)
-          );
-      }
-
-      // Show model when image is detected
       document.addEventListener("DOMContentLoaded", () => {
-        const target = document.querySelector("[mindar-image-target]");
         const model = document.querySelector("#gltfModel");
+        const target = document.querySelector("#targetEntity");
+
+        model.addEventListener("model-loaded", () => {
+          console.log("✅ GLTF model loaded successfully!");
+        });
+
+        model.addEventListener("error", (e) => {
+          console.error("❌ GLTF model error:", e);
+        });
 
         target.addEventListener("targetFound", () => {
-          console.log("✅ Target found!");
+          console.log("📸 Target Found — showing model");
           model.setAttribute("visible", "true");
         });
 
         target.addEventListener("targetLost", () => {
-          console.log("❌ Target lost!");
+          console.log("📴 Target Lost — hiding model");
           model.setAttribute("visible", "false");
         });
       });
