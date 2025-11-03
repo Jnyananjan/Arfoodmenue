@@ -8,8 +8,8 @@
 
   <body>
     <a-scene
-      mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/targets.mind; 
-                    filterMinCF:0.001; 
+      mindar-image="imageTargetSrc: https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/targets.mind;
+                    filterMinCF:0.001;
                     filterBeta:0.005;"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
@@ -17,8 +17,11 @@
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <!-- Replace this with your actual Supabase GLB file URL -->
-        <a-asset-item id="model1" src="https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/scene.gltf"></a-asset-item>
+        <!-- Replace this URL with your actual Supabase GLB model -->
+        <a-asset-item
+          id="model1"
+          src="https://dhkyzhpqoreeytuyeioj.supabase.co/storage/v1/object/public/Foodmenue/scene.gltf"
+        ></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -37,6 +40,17 @@
     </a-scene>
 
     <script>
+      // Register service worker for caching
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then(() => console.log("✅ Service Worker Registered (Model Cached)"))
+          .catch((error) =>
+            console.error("❌ Service Worker Registration Failed:", error)
+          );
+      }
+
+      // Show model when image is detected
       document.addEventListener("DOMContentLoaded", () => {
         const target = document.querySelector("[mindar-image-target]");
         const model = document.querySelector("#gltfModel");
