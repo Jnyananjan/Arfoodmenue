@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iFoods Menu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Playfair+Display&display=swap');
+
+  body {
+    margin: 0;
+    background-color: #161616;
+    color: #eee;
+    font-family: 'Playfair Display', serif;
+  }
+
+  a {
+    color: #eee;
+    text-decoration: none;
+  }
+
+  .top-header {
+    background: #111;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 20px;
+    color: #aaa;
+  }
+
+  .top-header .info-left,
+  .top-header .info-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .top-header svg {
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  header {
+    background-color: transparent;
+    padding: 20px 20px 0 20px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: #9fec48;
+  }
+
+  nav {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+  }
+
+  nav ul li {
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  nav ul li:hover {
+    color: #9fec48;
+  }
+
+  .find-table-btn {
+    background: #9fec48;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    color: #161616;
+  }
+
+  .hero-section {
+    background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=1080') center center/cover no-repeat;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #eee;
+    padding: 80px 20px 120px 20px;
+    position: relative;
+  }
+
+  .hero-subtitle {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: #9fec48;
+    margin-bottom: 14px;
+  }
+
+  .hero-separator {
+    width: 80px;
+    height: 3px;
+    background: #9fec48;
+    margin: 8px auto 16px auto;
+    border-radius: 30px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .section {
+    max-width: 1024px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
+  }
+
+  .menu-section-title {
+    text-align: center;
+    color: #eee;
+    font-size: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    margin-top: 40px;
+  }
+
+  .menu-section-subtitle {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 400;
+    margin-bottom: 30px;
+  }
+
+  .menu-list {
+    display: flex;
+    justify-content: center;
+    gap: 6rem;
+    flex-wrap: wrap;
+  }
+
+  .menu-column {
+    flex: 1 1 320px;
+    min-width: 280px;
+  }
+
+  .menu-item {
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+  }
+
+  .menu-item-info {
+    flex: 1;
+  }
+
+  .menu-item-title {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .menu-item-desc {
+    font-size: 13px;
+    color: #aaa;
+    font-weight: 400;
+    max-width: 270px;
+    line-height: 1.4;
+  }
+
+  .menu-separator {
+    border-left: 1px solid #333;
+    height: 70px;
+    margin: 0 20px;
+  }
+
+  .menu-item-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 12px;
+  }
+
+  /* Decorative images on sides for appetizers section */
+  .decoration-app-left,
+  .decoration-app-right {
+    position: absolute;
+    width: 130px;
+    opacity: 0.18;
+  }
+
+  .decoration-app-left {
+    left: 20px;
+    top: 550px;
+  }
+
+  .decoration-app-right {
+    right: 20px;
+    top: 590px;
+  }
+
+</style>
+</head>
+<body>
+  <div class="top-header">
+    <div class="info-left">
+      <span>
+        <svg style="width:14px; height:14px;" fill="#aaa" viewBox="0 0 24 24"><path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5A2.5 2.5 0 1 1 14.5 9 2.5 2.5 0 0 1 12 11.5z"/></svg>
+        Realxmart St, Balkhuna City, London N78L UK
+      </span>
+      <span>Daily: 8:00 am to 10:00 pm</span>
+    </div>
+    <div class="info-right">
+      <span>+1 153 478 7890</span>
+      <span>booking@iRestaurant.com</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="nav-container">
+      <div class="logo">iFoods</div>
+      <nav>
+        <ul>
+          <li>HOME</li>
+          <li>MENU</li>
+          <li>ABOUT US</li>
+          <li>RESERVATION</li>
+          <li>BLOG</li>
+          <li>CONTACT US</li>
+        </ul>
+      </nav>
+      <button class="find-table-btn">FIND A TABLE</button>
+    </div>
+  </header>
+
+  <section class="hero-section" aria-label="Our Menu highlight">
+    <div class="hero-subtitle">DELICIOUS & AMAZING</div>
+    <div class="hero-separator"></div>
+    <h1 class="hero-title">Our Menu</h1>
+  </section>
+
+  <section class="section" aria-labelledby="appetizers-title" style="position:relative;">
+    <h3 class="menu-section-title">STARTER MENU</h3>
+    <div class="hero-separator" style="margin: 8px auto 14px auto;"></div>
+    <h2 class="menu-section-subtitle" id="appetizers-title">Appetizers</h2>
+    <img src="https://images.unsplash.com/photo-1579722827199-b3b68b089bc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=130" alt="" class="decoration-app-left" aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1562967916-eb82221dfb44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=130" alt="" class="decoration-app-right" aria-hidden="true">
+    <div class="menu-list">
+      <div class="menu-column">
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Greek Salad" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Greek Salad</span> <span>$25.50</span></div>
+            <div class="menu-item-desc">Tomatoes, green bell peppers, sliced cucumber, onion, olives, and feta cheese.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1617191511467-7b495dd4e30d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Lasagna" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Lasagna</span> <span>$40.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1556909193-cb48d3c1b222?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Butternut Pumpkin" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Butternut Pumpkin</span> <span>$10.00</span></div>
+            <div class="menu-item-desc">Typesetting industry: Lorem Ipsum is simply dummy text of the printed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-separator" aria-hidden="true"></div>
+
+      <div class="menu-column">
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1532634896-26909e9936a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Tokanum Wagyu" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Tokanum Wagyu</span> <span>$39.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1611691541092-8109c65dc302?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Olivas Kellenas" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Olivas Kellenas</span> <span>$35.50</span></div>
+            <div class="menu-item-desc">Avocados with crab meat, red onion, cribb salad stuffed red bell pepper and green bell pepper.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1600891963996-c9a0db8c48fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Opu Fish" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Opu Fish</span> <span>$49.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="main-dishes-title">
+    <h3 class="menu-section-title">RESERVATIONS</h3>
+    <div class="hero-separator" style="margin: 8px auto 14px auto;"></div>
+    <h2 class="menu-section-subtitle" id="main-dishes-title">Main Dishes</h2>
+    <div class="menu-list">
+      <div class="menu-column">
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Greek Salad" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Greek Salad</span> <span>$25.50</span></div>
+            <div class="menu-item-desc">Tomatoes, green bell peppers, sliced cucumber, onion, olives, and feta cheese.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1617191511467-7b495dd4e30d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Lasagna" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Lasagna</span> <span>$40.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1556909193-cb48d3c1b222?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Butternut Pumpkin" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Butternut Pumpkin</span> <span>$10.00</span></div>
+            <div class="menu-item-desc">Typesetting industry: Lorem Ipsum is simply dummy text of the printed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-separator" aria-hidden="true"></div>
+
+      <div class="menu-column">
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1532634896-26909e9936a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Tokanum Wagyu" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Tokanum Wagyu</span> <span>$39.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1611691541092-8109c65dc302?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Olivas Kellenas" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Olivas Kellenas</span> <span>$35.50</span></div>
+            <div class="menu-item-desc">Avocados with crab meat, red onion, cribb salad stuffed red bell pepper and green bell pepper.</div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <img src="https://images.unsplash.com/photo-1600891963996-c9a0db8c48fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5dHx8MHx8fHJ8fHx8fHx8MTY4MDk3NjA3Mw&ixlib=rb-4.0.3&q=80&w=64" alt="Opu Fish" class="menu-item-img" />
+          <div class="menu-item-info">
+            <div class="menu-item-title"><span>Opu Fish</span> <span>$49.00</span></div>
+            <div class="menu-item-desc">Vegetables, cheeses, ground meats, tomato sauce, seasonings and spices.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
